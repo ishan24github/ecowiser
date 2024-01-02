@@ -15,7 +15,7 @@ from .utils import parse_and_search_subtitles, extract_subtitles
 
 
 def upload_video(request):
-    temp_file = tempfile.NamedTemporaryFile(delete=True)
+    temp_file = NamedTemporaryFile(delete=True)
     video_file = tempfile.NamedTemporaryFile(suffix='.mp4')
 
 
@@ -38,6 +38,9 @@ def upload_video(request):
             except Exception as e:
                 print(f'Error: {e}')
 
+            with open(temp_file.name) as f:
+                content = f.read()
+                print(content)
 
         
             s = Subs(video= video)
