@@ -3,6 +3,9 @@ import pysrt
 import os 
 from django.conf import settings
 
+from celery import shared_task
+
+# @shared_task
 def extract_subtitles(video_path, subtitle_path):
     
     ccextractor_cmd = ['ccextractor', video_path, '-o', subtitle_path]

@@ -8,6 +8,8 @@ from django.conf import settings
 import os
 from django.core.files import File
 
+from celery.result import AsyncResult
+
 
 import urllib.request
 import tempfile
@@ -21,40 +23,43 @@ from .utils import parse_and_search_subtitles, extract_subtitles
 def upload_video(request):
     temp_file = NamedTemporaryFile(delete=True)
     # video_file = tempfile.NamedTemporaryFile(suffix='.mp4')
-    # video_file = NamedTemporaryFile(delete=True)
+    video_file = NamedTemporaryFile(delete=True)
 
 
 
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
-        video_file = request.FILES.get('video')
+        # video_file = request.FILES.get('video')
 
         if form.is_valid():
             video = form.save()
 
-            file_path = os.path.join(settings.MEDIA_ROOT, video_file.name)            
-            with open(file_path, 'wb') as f:
-                for chunk in video_file.chunks():
-                    f.write(chunk)
+            # file_path = os.path.join(settings.MEDIA_ROOT, video_file.name)            
+            # with open(file_path, 'wb') as f:
+            #     for chunk in video_file.chunks():
+            #         f.write(chunk)
 
 
-            subtitle_path = os.path.join(settings.MEDIA_ROOT, 'subtitles.srt')
+            # # subtitle_path = os.path.join(settings.MEDIA_ROOT, 'subtitles.srt')
 
-            subtitles = extract_subtitles(file_path, temp_file.name)
+            # # ccextractor_cmd = ['ccextractor', file_path, '-o', subtitle_path]
+
+            # subtitles = extract_subtitles.delay(file_path, temp_file.name)
 
             
+            # os.remove(file_path)
 
-            # try:
-            #     urllib.request.urlretrieve(video.video.url, video_file.name) 
-            #     subtitles = extract_subtitles(video_file.name, temp_file.name)
+            try:
+                urllib.request.urlretrieve(video.video.url, video_file.name) 
+                subtitles = extract_subtitles(video_file.name, temp_file.name)
 
-            #     if subtitles is not None:
-            #         print("subtitles")
-            #     else:
-            #         print('Subtitle extraction failed.')
+                if subtitles is not None:
+                    print("subtitles")
+                else:
+                    print('Subtitle extraction failed.')
 
-            # except Exception as e:
-            #     print(f'Error: {e}')
+            except Exception as e:
+                print(f'Error: {e}')
 
             # with open(temp_file.name) as f:
             #     content = f.read()
@@ -73,8 +78,8 @@ def upload_video(request):
 
             
 
-            os.remove(file_path)
-            os.remove(subtitle_path)
+            # os.remove(file_path)
+            # os.remove(subtitle_path)
 
 
             return HttpResponseRedirect(reverse('upload_video'))
