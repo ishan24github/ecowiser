@@ -1,0 +1,17 @@
+
+<h2> Upload Video </h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload</button>
+</form>
+
+
+<h2>Video List</h2>
+    <ul>
+        {% for video in videos %}
+            <li><a href="{% url 'processed_video' video.pk %}">{{ video.video.name }}</a>
+                <a href="delete/{{ video.pk }}">delete</a></li>
+        {% endfor %}
+     </ul>

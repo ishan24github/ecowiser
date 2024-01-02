@@ -1,0 +1,31 @@
+
+<h2> Processed Video </h2>
+
+<video width="640" height="360" controls>
+    <source src="{{ video.video.url }}" type="video/mp4">
+    Your browser does not support the video tag
+</video>
+
+
+<p>Video URL = {{ video.video.url }}</p>
+
+<form method="post" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+
+<h2>Search Results for "{{ search_word }}" in {{ video.video.name }}</h2>
+
+total number of matches = {{ matchs|length }}
+
+{% if segments %}
+    <ul>
+        {% for segment in segments %}
+            <li>start = {{ segment.0 }},    end = {{ segment.1 }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No matching timestamps found.</p>
+{% endif %}
