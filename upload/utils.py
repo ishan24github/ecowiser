@@ -1,8 +1,11 @@
 import subprocess
 import pysrt
+import os 
+from django.conf import settings
 
-def extract_subtitles(video_path, temp_file):
-    ccextractor_cmd = ['ccextractor', video_path, '-o', temp_file]
+def extract_subtitles(video_path, subtitle_path):
+    
+    ccextractor_cmd = ['ccextractor', video_path, '-o', subtitle_path]
 
     try:
         result = subprocess.run(ccextractor_cmd, check=True)
