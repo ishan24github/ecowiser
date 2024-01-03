@@ -7,7 +7,7 @@ from celery import shared_task
 def extract_subtitles(video_path, subtitle_path):
     
     # ccextractor_cmd = ['ccextractor', video_path, '-o', subtitle_path]
-    ccextractor_cmd = ['ffmpeg', '-i', video_path, subtitle_path]
+    ccextractor_cmd = ['ffmpeg', '-i', video_path,'>', subtitle_path]
 
     try:
         result = subprocess.run(ccextractor_cmd, check=True)
