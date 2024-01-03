@@ -17,7 +17,7 @@ from .utils import parse_and_search_subtitles, extract_subtitles
 
 def upload_video(request):
     # temp_file = NamedTemporaryFile(delete=True)
-    temp_file = tempfile.NamedTemporaryFile(suffix='.srt')
+    temp_file = tempfile.NamedTemporaryFile(suffix='.srt')   ##  srt extension for ffmpeg
     video_file = tempfile.NamedTemporaryFile(suffix='.mp4')
     # video_file2 = tempfile.NamedTemporaryFile(suffix='.mp4')
     # video_file = NamedTemporaryFile(delete=True)
@@ -49,6 +49,8 @@ def upload_video(request):
             s.subtitles.save(filename, content=temp_file)
             s.video = video
             s.save()
+
+            temp_file.close()
 
 
             return HttpResponseRedirect(reverse('upload_video'))
