@@ -3,8 +3,7 @@ from django.urls import reverse
 from .forms import VideoUploadForm, WordForm
 from .models import UploadedVideo, Subs
 from django.core.files.temp import NamedTemporaryFile
-
-from django.core.files import File
+from moviepy.editor import VideoFileClip
 
 
 import urllib.request
@@ -19,6 +18,7 @@ from .utils import parse_and_search_subtitles, extract_subtitles
 def upload_video(request):
     temp_file = NamedTemporaryFile(delete=True)
     video_file = tempfile.NamedTemporaryFile(suffix='.mp4')
+    # video_file2 = tempfile.NamedTemporaryFile(suffix='.mp4')
     # video_file = NamedTemporaryFile(delete=True)
 
     if request.method == 'POST':
@@ -29,6 +29,9 @@ def upload_video(request):
 
             try:
                 urllib.request.urlretrieve(video.video.url, video_file.name) 
+                # clip = VideoFileClip(video_file.name)
+                # clip = clip.subclip(0, 60)
+                # clip.write_videofile(video_file2.name)
                 subtitles = extract_subtitles(video_file.name, temp_file.name)
 
                 if subtitles is not None:
