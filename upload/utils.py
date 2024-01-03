@@ -1,7 +1,5 @@
 import subprocess
 import pysrt
-import os 
-from django.conf import settings
 
 from celery import shared_task
 

@@ -4,11 +4,7 @@ from .forms import VideoUploadForm, WordForm
 from .models import UploadedVideo, Subs
 from django.core.files.temp import NamedTemporaryFile
 
-from django.conf import settings
-import os
 from django.core.files import File
-
-from celery.result import AsyncResult
 
 
 import urllib.request
@@ -22,32 +18,14 @@ from .utils import parse_and_search_subtitles, extract_subtitles
 
 def upload_video(request):
     temp_file = NamedTemporaryFile(delete=True)
-    # video_file = tempfile.NamedTemporaryFile(suffix='.mp4')
-    video_file = NamedTemporaryFile(delete=True)
-
-
+    video_file = tempfile.NamedTemporaryFile(suffix='.mp4')
+    # video_file = NamedTemporaryFile(delete=True)
 
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
-        # video_file = request.FILES.get('video')
 
         if form.is_valid():
             video = form.save()
-
-            # file_path = os.path.join(settings.MEDIA_ROOT, video_file.name)            
-            # with open(file_path, 'wb') as f:
-            #     for chunk in video_file.chunks():
-            #         f.write(chunk)
-
-
-            # # subtitle_path = os.path.join(settings.MEDIA_ROOT, 'subtitles.srt')
-
-            # # ccextractor_cmd = ['ccextractor', file_path, '-o', subtitle_path]
-
-            # subtitles = extract_subtitles.delay(file_path, temp_file.name)
-
-            
-            # os.remove(file_path)
 
             try:
                 urllib.request.urlretrieve(video.video.url, video_file.name) 
@@ -61,25 +39,12 @@ def upload_video(request):
             except Exception as e:
                 print(f'Error: {e}')
 
-            # with open(temp_file.name) as f:
-            #     content = f.read()
-            #     print(content)
-
-            # with open(subtitle_path, "w") as f:
-            #     file = File(f)
+           
             s = Subs(video= video)
             filename = Path(f'{video.video.name}').stem
             s.subtitles.save(filename, content=temp_file)
             s.video = video
             s.save()
-
-            # f = open(subtitle_path,"w")
-            # file = File(f)
-
-            
-
-            # os.remove(file_path)
-            # os.remove(subtitle_path)
 
 
             return HttpResponseRedirect(reverse('upload_video'))
